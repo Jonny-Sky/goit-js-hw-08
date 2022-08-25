@@ -9,7 +9,7 @@ player.on('timeupdate', function (currentTime) {
   throttle(
     localStorage.setItem(
       'videoplayer-current-time',
-      JSON.stringify(currentTime)
+      JSON.stringify(currentTime.seconds)
     ),
     1000
   );
