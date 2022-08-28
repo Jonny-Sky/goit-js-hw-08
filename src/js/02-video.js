@@ -5,7 +5,7 @@ const iframe = document.querySelector('iframe');
 const player = new Player(iframe);
 
 player.on('timeupdate', function (currentTime) {
-  console.log('played the video!');
+  // console.log('played the video!');
   throttle(
     localStorage.setItem(
       'videoplayer-current-time',
@@ -18,12 +18,12 @@ player.on('timeupdate', function (currentTime) {
 const saveTime = localStorage.getItem('videoplayer-current-time');
 if (saveTime) {
   let parsedTime = JSON.parse(saveTime);
-  const currentSecond = parsedTime.seconds;
-  console.log(currentSecond);
+  const currentSecond = parsedTime;
+  // console.log(currentSecond);
 
   if (parsedTime) {
     player
-      .setCurrentTime(parsedTime.seconds)
+      .setCurrentTime(parsedTime)
       .then(function (seconds) {
         // seconds = the actual time that the player seeked to
       })
