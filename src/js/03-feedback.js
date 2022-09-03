@@ -1,47 +1,37 @@
 import throttle from 'lodash.throttle';
 
 const STORAGE_KEY = 'feedback-form-state';
-let formData = {};
+const refs = {
+  form: document.querySelector('form'),
+  textarea: document.querySelector('form textarea'),
+};
 
-const form = document.querySelector('form');
-const textarea = document.querySelector('form textarea');
-const email = document.querySelector('form input');
-
-form.addEventListener('submit', onFormSubmit);
-form.addEventListener('input', throttle(messageSubmit, 500));
+refs.form.addEventListener('submit', onFormSubmit);
+refs.form.addEventListener('input', throttle(messageSubmit, 500));
 
 populateTextarea();
 
-form.addEventListener('input', evt => {
+function messageSubmit(evt) {
+  let formData = localStorage.getItem(STORAGE_KEY);
+  formData = formData ? JSON.parse(formData) : {};
   formData[evt.target.name] = evt.target.value;
-});
-
-function messageSubmit() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+}
+
+function onFormSubmit(evt) {
+  evt.preventDefault();
+  const parsObjekt = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  console.log('Objekt:', parsObjekt);
+  evt.currentTarget.reset();
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 function populateTextarea() {
   const savedMessage = localStorage.getItem(STORAGE_KEY);
   if (savedMessage) {
-    const message = savedMessage ? JSON.parse(savedMessage) : {};
-    if (message.email) {
-      email.value = message.email;
-    }
-    if (message.message) {
-      textarea.value = message.message;
-    }
+    const message = JSON.parse(savedMessage);
+    Object.entries(message).forEach(([name, value]) => {
+      refs.form.elements[name].value = value;
+    });
   }
-}
-
-function onFormSubmit(evt) {
-  evt.preventDefault();
-  try {
-    const parsObjekt = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    console.log('Objekt:', parsObjekt);
-  } catch (error) {
-    console.log(error.message);
-  }
-  evt.currentTarget.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  return (formData = {});
 }
